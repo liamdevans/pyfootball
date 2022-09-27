@@ -3,25 +3,25 @@ import traceback
 from datetime import date
 
 from tests import resources
-from pyfootball.models.leaguetable import LeagueTable
+from pyfootball.models.standings import Standings
 
 
 class TestLeagueTable(unittest.TestCase):
     def test_init(self):
         try:
-            LeagueTable(resources.LEAGUE_TABLE)
+            Standings(resources.LEAGUE_TABLE)
         except:
             self.fail()
 
     def test_init_bad_data(self):
         with self.assertRaises(KeyError):
-            LeagueTable({"a": "dict", "that": "has", "bad": "data"})
+            Standings({"a": "dict", "that": "has", "bad": "data"})
 
 
 class TestLeagueTableAfterInit(unittest.TestCase):
     def setUp(self):
         try:
-            self.table = LeagueTable(resources.LEAGUE_TABLE)
+            self.table = Standings(resources.LEAGUE_TABLE)
         except Exception:
             print("Setting up LeagueTable object failed:")
             traceback.print_exc()

@@ -1,13 +1,13 @@
 import requests
 import os
 
-from . import globals
-from .globals import endpoints
-from .models.competition import Competition
-from .models.team import Team
-from .models.fixture import Fixture
-from .models.leaguetable import LeagueTable
-from .models.player import Player
+import globals
+from globals import endpoints
+from models.competition import Competition
+from models.team import Team
+from models.fixture import Fixture
+from models.standings import Standings
+from models.player import Player
 
 
 class Football(object):
@@ -77,7 +77,7 @@ class Football(object):
 
         data = r.json()
         comp_list = []
-        for comp in data:
+        for comp in data['competitions']:
             comp_list.append(Competition(comp))
         return comp_list
 
@@ -96,8 +96,9 @@ class Football(object):
         r = requests.get(endpoint, headers=globals.headers)
         globals.update_prev_response(r, endpoint)
         r.raise_for_status()
+        data = r.json()
 
-        return LeagueTable(r.json())
+        return Standings(data)
 
     def get_comp_fixtures(self, comp_id):
         """Given an ID, returns a list of Fixture objects associated with the
@@ -117,7 +118,7 @@ class Football(object):
 
         data = r.json()
         fixture_list = []
-        for fixture in data['fixtures']:
+        for fixture in data['matches']:
             fixture_list.append(Fixture(fixture))
         return fixture_list
 
@@ -159,8 +160,8 @@ class Football(object):
         r = requests.get(endpoint, headers=globals.headers)
         globals.update_prev_response(r, endpoint)
         r.raise_for_status()
-
-        return Fixture(r.json()['fixture'])
+        data = r.json()
+        return Fixture(data)
 
     def get_all_fixtures(self):
         """Returns a list of all Fixture objects in the specified time frame.
@@ -178,7 +179,7 @@ class Football(object):
 
         data = r.json()
         fixture_list = []
-        for fixture in data['fixtures']:
+        for fixture in data['matches']:
             fixture_list.append(Fixture(fixture))
         return fixture_list
 
@@ -211,14 +212,14 @@ class Football(object):
 
         :returns: player_list: A list of Player objects in the specified team.
         """
-        endpoint = endpoints['team_players'].format(team_id)
+        endpoint = endpoints['team'].format(team_id)
         r = requests.get(endpoint, headers=globals.headers)
         globals.update_prev_response(r, endpoint)
         r.raise_for_status()
 
         data = r.json()
         player_list = []
-        for player in data['players']:
+        for player in data['squad']:
             player_list.append(Player(player))
         return player_list
 
@@ -240,34 +241,63 @@ class Football(object):
 
         data = r.json()
         fixture_list = []
-        for fixture in data['fixtures']:
+        for fixture in data['matches']:
             fixture_list.append(Fixture(fixture))
         return fixture_list
 
-    def search_teams(self, team_name):
-        """Given a team name, queries the database for matches and returns
-        a dictionary containing key-value pairs of their team IDs and
-        team names.
+    def get_player(self):
+        pass
 
-        Sends one request to api.football-data.org.
+    def get_player_matches(self):
+        pass
 
-        :param team_name: The partial or full team name.
-        :type team_name: string
+    # endpoint now only returns same 50 teams for any search
+    # def search_teams(self, team_name):
+    #     """Given a team name, queries the database for matches and returns
+    #     a dictionary containing key-value pairs of their team IDs and
+    #     team names.
+    #
+    #     Sends one request to api.football-data.org.
+    #
+    #     :param team_name: The partial or full team name.
+    #     :type team_name: string
+    #
+    #     :returns: matches: A dict with team ID as keys and team name as values.
+    #     :returns: ``None``: If no matches are found for the given team_name.
+    #     """
+    #     name = team_name.replace(" ", "%20")
+    #     endpoint = endpoints['team'].format('?name=' + name)
+    #     r = requests.get(endpoint, headers=globals.headers)
+    #     globals.update_prev_response(r, endpoint)
+    #     r.raise_for_status()
+    #
+    #     data = r.json()
+    #     if data['count'] == 0:
+    #         return None
+    #     else:
+    #         matches = {}
+    #         for team in data['teams']:
+    #             matches[team['id']] = team['name']
+    #         return matches
 
-        :returns: matches: A dict with team ID as keys and team name as values.
-        :returns: ``None``: If no matches are found for the given team_name.
-        """
-        name = team_name.replace(" ", "%20")
-        endpoint = endpoints['team'].format('?name='+name)
-        r = requests.get(endpoint, headers=globals.headers)
-        globals.update_prev_response(r, endpoint)
-        r.raise_for_status()
 
-        data = r.json()
-        if data['count'] is 0:
-            return None
-        else:
-            matches = {}
-            for team in data['teams']:
-                matches[team['id']] = team['name']
-            return matches
+if __name__ == '__main__':
+    f = Football()
+    globals.headers = {'X-Auth-Token': os.getenv('PYFOOTBALL_API_KEY')}
+
+    # print([c.name for c in f.get_all_competitions()]) # passed
+    # print(f.get_competition('ELC').name)  # passed
+    # print(f.get_competition_teams('ELC'))     # passed
+    # print(f.get_comp_fixtures('ELC'))   # passed
+
+    # print(f.get_all_fixtures())   # passed
+    # print(f.get_fixture(12).winner) # passed
+
+    # print([t.team_tla for t in f.get_league_table(2016).total_standings])   # passed
+    # print(f.get_prev_response())   # passed
+
+    # print(f.get_team(90))     # passed
+    # print([h.home_team_name for h in f.get_team_fixtures(90)])  # passed
+    # print(f.search_teams('manchester')) # failed
+    print([p.nationality for p in f.get_team_players(90)])  # passed
+

@@ -7,7 +7,7 @@ from tests import resources
 from pyfootball.models.competition import Competition
 from pyfootball.models.team import Team
 from pyfootball.models.fixture import Fixture
-from pyfootball.models.leaguetable import LeagueTable
+from pyfootball.models.standings import Standings
 
 
 class TestCompetition(unittest.TestCase):
@@ -76,4 +76,4 @@ class TestCompetitionAfterInit(unittest.TestCase):
         mock_response.json.return_value = resources.LEAGUE_TABLE
 
         table = self.comp.get_league_table()
-        self.assertIsInstance(table, LeagueTable)
+        self.assertIsInstance(table, Standings)

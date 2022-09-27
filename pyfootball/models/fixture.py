@@ -10,37 +10,36 @@ class Fixture(object):
         :param data: The fixture data from the API's response.
         :type data: dict
         """
-        self._home_team_ep = data['_links']['homeTeam']['href']
-        self._away_team_ep = data['_links']['awayTeam']['href']
-        self._competition_ep = data['_links']['competition']['href']
-        self.date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%SZ')
+        # self._home_team_ep = data['_links']['homeTeam']['href']
+        # self._away_team_ep = data['_links']['awayTeam']['href']
+        # self._competition_ep = data['_links']['competition']['href']
+        self.area = data['area']
+        self.competition = data['competition']
+        self.season = data['season']
+        self.id = data['id']
+        self.date = datetime.strptime(data['utcDate'], '%Y-%m-%dT%H:%M:%SZ')
         self.status = data['status']
         self.matchday = data['matchday']
-        self.home_team = data['homeTeamName']
-        self.home_team_id = int(self._home_team_ep.split("/")[-1])
-        self.away_team = data['awayTeamName']
-        self.away_team_id = int(self._away_team_ep.split("/")[-1])
-        self.competition_id = int(self._competition_ep.split("/")[-1])
+        self.stage = data['stage']
+        self.group = data['group']
+        self.lastUpdated = data['lastUpdated']
+        self.home_team = data['homeTeam']
+        self.home_team_id = self.home_team['id']
+        self.home_team_name = self.home_team['name']
+        self.away_team = data['awayTeam']
+        self.away_team_id = self.away_team['id']
+        self.away_team_name = self.away_team['name']
+        self.score = data['score']
+        self.odds = data['odds']
+        self.referees = data['referees']
 
-        if data['result']['goalsHomeTeam'] is not None:
-            self.result = {
-                'home_team_goals': data['result']['goalsHomeTeam'],
-                'away_team_goals': data['result']['goalsAwayTeam'],
-            }
-            if 'halfTime' in data['result']:
-                ht = data['result']['halfTime']
-                self.result['half_time'] = {
-                    'home_team_goals': ht['goalsHomeTeam'],
-                    'away_team_goals': ht['goalsAwayTeam']
-                }
+        if self.status == 'FINISHED':
+            if self.score['winner'] == 'HOME_TEAM':
+                self.winner = self.home_team_name
+            elif self.score['winner'] == 'AWAY_TEAM':
+                self.winner = self.away_team_name
+            else:
+                self.winner = 'DRAW'
         else:
-            self.result = None
+            self.winner = None
 
-        if data['odds']:
-            self.odds = {
-                'home_win': float(data['odds']['homeWin']),
-                'draw': float(data['odds']['draw']),
-                'away_win': float(data['odds']['awayWin'])
-            }
-        else:
-            self.odds = None

@@ -5,7 +5,7 @@ from datetime import datetime
 from pyfootball import globals
 from .team import Team
 from .fixture import Fixture
-from .leaguetable import LeagueTable
+from .standings import Standings
 
 
 class Competition():
@@ -16,17 +16,20 @@ class Competition():
         :param data: The competition data from the API's response.
         :type data: dict
         """
-        self._teams_ep = data['_links']['teams']['href']
-        self._fixtures_ep = data['_links']['fixtures']['href']
-        self._league_table_ep = data['_links']['leagueTable']['href']
+        # self._teams_ep = data['_links']['teams']['href']
+        # self._fixtures_ep = data['_links']['fixtures']['href']
+        # self._league_table_ep = data['_links']['leagueTable']['href']
         self.id = data['id']
-        self.name = data['caption']
-        self.code = data['league']
-        self.year = int(data['year'])
-        self.current_matchday = data['currentMatchday']
-        self.number_of_matchdays = data['numberOfMatchdays']
-        self.number_of_teams = data['numberOfTeams']
-        self.number_of_games = data['numberOfGames']
+        self.area = data['area']
+        self.name = data['name']
+        self.code = data['code']
+        self.type = data['type']
+        self.emblem = data['emblem']
+        self.start_date = datetime.strptime(data['currentSeason']['startDate'], '%Y-%m-%d')
+        self.end_date = datetime.strptime(data['currentSeason']['endDate'], '%Y-%m-%d')
+        self.current_matchday = data['currentSeason']['currentMatchday']
+        self.winner = data['currentSeason']['winner']
+        self.numberOfAvailableSeasons = data.get('numberOfAvailableSeasons', len(data['seasons']))
         self.last_updated = datetime.strptime(data['lastUpdated'],
                                               '%Y-%m-%dT%H:%M:%SZ')
 
@@ -77,4 +80,4 @@ class Competition():
         globals.update_prev_response(r, self._league_table_ep)
         r.raise_for_status()
 
-        return LeagueTable(r.json())
+        return Standings(r.json())
