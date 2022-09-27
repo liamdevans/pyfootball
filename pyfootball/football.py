@@ -245,11 +245,45 @@ class Football(object):
             fixture_list.append(Fixture(fixture))
         return fixture_list
 
-    def get_player(self):
-        pass
+    def get_player(self, player_id):
+        """Given a player ID, returns a Player object associated with
+        the player.
 
-    def get_player_matches(self):
-        pass
+        Sends one request to api.football-data.org.
+
+        :param player_id: The player ID.
+        :type player_id: integer
+
+        :return: Player: A Player object for the player.
+        """
+        endpoint = endpoints['player'].format(player_id)
+        r = requests.get(endpoint, headers=globals.headers)
+        globals.update_prev_response(r, endpoint)
+        r.raise_for_status()
+        data = r.json()
+
+        return Player(data)
+
+    def get_player_matches(self, player_id, n_matches=15):
+        """Given a player_id, returns n_matches number of Fixture objects
+        of which the player has played in.
+
+        :param player_id: The player ID
+        :param n_matches: The number of matches to receive (default 15)
+        :return: matches_list: List of Fixture objects
+        """
+        endpoint = endpoints['player_matches'].format(player_id) + '?limit={}'.format(n_matches)
+        r = requests.get(endpoint, headers=globals.headers)
+        globals.update_prev_response(r, endpoint)
+        r.raise_for_status()
+        data = r.json()
+
+        matches_list = []
+        for match in data['matches']:
+            matches_list.append(Fixture(match))
+        return matches_list
+
+
 
     # endpoint now only returns same 50 teams for any search
     # def search_teams(self, team_name):
@@ -283,7 +317,8 @@ class Football(object):
 
 if __name__ == '__main__':
     f = Football()
-    globals.headers = {'X-Auth-Token': os.getenv('PYFOOTBALL_API_KEY')}
+    globals.headers = {'X-Auth-Token': os.getenv('PYFOOTBALL_API_KEY'),
+                       'X-Unfold-Goals': 'true'}
 
     # print([c.name for c in f.get_all_competitions()]) # passed
     # print(f.get_competition('ELC').name)  # passed
@@ -299,5 +334,7 @@ if __name__ == '__main__':
     # print(f.get_team(90))     # passed
     # print([h.home_team_name for h in f.get_team_fixtures(90)])  # passed
     # print(f.search_teams('manchester')) # failed
-    print([p.nationality for p in f.get_team_players(90)])  # passed
+    # print([p.nationality for p in f.get_team_players(90)])  # passed
 
+    # print(f.get_player(16275).shirt_number)  # passed
+    # print([m.winner for m in f.get_player_matches(16275, 20)]) # passed

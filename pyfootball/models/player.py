@@ -16,3 +16,6 @@ class Player():
         self.date_of_birth = datetime.strptime(data['dateOfBirth'],
                                                '%Y-%m-%d').date()
         self.nationality = data['nationality']
+        self.shirt_number = data.get('shirtNumber')
+        self.lastUpdated = data.get('lastUpdated')
+        self.currentTeam = data.get('currentTeam')

@@ -12,6 +12,8 @@ endpoints = {
     'comp_teams': _base + 'competitions/{}/teams',
     'comp_fixtures': _base + 'competitions/{}/matches',
     'team': _base + 'teams/{}',
+    'player': _base + 'persons/{}',
+    'player_matches': _base + 'persons/{}/matches',
     'team_fixtures': _base + 'teams/{}/matches/',
     'league_table': _base + 'competitions/{}/standings'
 }
