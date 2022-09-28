@@ -27,7 +27,7 @@ class Competition():
         self.end_date = datetime.strptime(data['currentSeason']['endDate'], '%Y-%m-%d')
         self.current_matchday = data['currentSeason']['currentMatchday']
         self.winner = data['currentSeason']['winner']
-        self.numberOfAvailableSeasons = data.get('numberOfAvailableSeasons', len(data['seasons']))
+        self.numberOfAvailableSeasons = data.get('numberOfAvailableSeasons') or len(data['seasons'])
         self.last_updated = datetime.strptime(data['lastUpdated'],
                                               '%Y-%m-%dT%H:%M:%SZ')
         self._teams_ep = endpoints['comp_teams'].format(self.id)
