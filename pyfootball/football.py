@@ -102,7 +102,7 @@ class Football(object):
 
     def get_comp_fixtures(self, comp_id):
         """Given an ID, returns a list of Fixture objects associated with the
-        given competition.
+        given competition, for the current season.
 
         Sends one request to api.football-data.org.
 
@@ -323,7 +323,7 @@ if __name__ == '__main__':
     # print([c.name for c in f.get_all_competitions()]) # passed
     # print(f.get_competition('ELC').name)  # passed
     # print(f.get_competition_teams('ELC'))     # passed
-    # print(f.get_comp_fixtures('ELC'))   # passed
+    print(set([fix.season['startDate'] for fix in f.get_comp_fixtures('ELC')]))   # passed
 
     # print(f.get_all_fixtures())   # passed
     # print(f.get_fixture(12).winner) # passed

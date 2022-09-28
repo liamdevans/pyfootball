@@ -3,6 +3,7 @@ import requests
 from datetime import datetime
 
 from pyfootball import globals
+from pyfootball.globals import endpoints
 from .team import Team
 from .fixture import Fixture
 from .standings import Standings
@@ -16,9 +17,6 @@ class Competition():
         :param data: The competition data from the API's response.
         :type data: dict
         """
-        # self._teams_ep = data['_links']['teams']['href']
-        # self._fixtures_ep = data['_links']['fixtures']['href']
-        # self._league_table_ep = data['_links']['leagueTable']['href']
         self.id = data['id']
         self.area = data['area']
         self.name = data['name']
@@ -32,6 +30,9 @@ class Competition():
         self.numberOfAvailableSeasons = data.get('numberOfAvailableSeasons', len(data['seasons']))
         self.last_updated = datetime.strptime(data['lastUpdated'],
                                               '%Y-%m-%dT%H:%M:%SZ')
+        self._teams_ep = endpoints['comp_teams'].format(self.id)
+        self._fixtures_ep = endpoints['comp_fixtures'].format(self.id)
+        self._league_table_ep = endpoints['league_table'].format(self.id)
 
     def get_fixtures(self):
         """Return a list of Fixture objects representing the fixtures in this
@@ -47,7 +48,7 @@ class Competition():
 
         data = r.json()
         fixture_list = []
-        for fixture in data['fixtures']:
+        for fixture in data['matches']:
             fixture_list.append(Fixture(fixture))
         return fixture_list
 

@@ -10,9 +10,6 @@ class Fixture(object):
         :param data: The fixture data from the API's response.
         :type data: dict
         """
-        # self._home_team_ep = data['_links']['homeTeam']['href']
-        # self._away_team_ep = data['_links']['awayTeam']['href']
-        # self._competition_ep = data['_links']['competition']['href']
         self.area = data['area']
         self.competition = data['competition']
         self.season = data['season']

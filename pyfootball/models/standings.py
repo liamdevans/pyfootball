@@ -9,8 +9,6 @@ class Standings(object):
         :param data: The league table data from the API's response.
         :type data: dict
         """
-        # self._competition_ep = data['_links']['competition']['href']
-        # self.competition_id = int(self._competition_ep.split('/')[-1])
         self.area = data['area']
         self.competition = data['competition']
         self.season = data['season']

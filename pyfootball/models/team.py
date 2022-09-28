@@ -2,6 +2,7 @@ import traceback
 import requests
 
 from pyfootball import globals
+from pyfootball.globals import endpoints
 from .player import Player
 from .fixture import Fixture
 
@@ -14,8 +15,6 @@ class Team(object):
         :param data: The team data from the API's response.
         :type data: dict
         """
-        # self._fixtures_ep = data['_links']['fixtures']['href']
-        # self._players_ep = data['_links']['players']['href']
         self.id = data['id']
         self.name = data['name']
         self.short_name = data['shortName']
@@ -32,6 +31,9 @@ class Team(object):
         self.staff = data['staff']
         self.lastUpdated = data['lastUpdated']
 
+        self._fixtures_ep = endpoints['team_fixtures'].format(self.id)
+        self._players_ep = endpoints['team'].format(self.id)
+
     def get_fixtures(self):
         """Return a list of Fixture objects representing this season's
         fixtures for the current team.
@@ -46,7 +48,7 @@ class Team(object):
 
         data = r.json()
         fixture_list = []
-        for fixture in data['fixtures']:
+        for fixture in data['matches']:
             fixture_list.append(Fixture(fixture))
         return fixture_list
 
@@ -64,6 +66,6 @@ class Team(object):
 
         data = r.json()
         player_list = []
-        for player in data['players']:
+        for player in data['squad']:
             player_list.append(Player(player))
         return player_list
