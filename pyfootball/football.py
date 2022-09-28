@@ -284,37 +284,6 @@ class Football(object):
         return matches_list
 
 
-
-    # endpoint now only returns same 50 teams for any search
-    # def search_teams(self, team_name):
-    #     """Given a team name, queries the database for matches and returns
-    #     a dictionary containing key-value pairs of their team IDs and
-    #     team names.
-    #
-    #     Sends one request to api.football-data.org.
-    #
-    #     :param team_name: The partial or full team name.
-    #     :type team_name: string
-    #
-    #     :returns: matches: A dict with team ID as keys and team name as values.
-    #     :returns: ``None``: If no matches are found for the given team_name.
-    #     """
-    #     name = team_name.replace(" ", "%20")
-    #     endpoint = endpoints['team'].format('?name=' + name)
-    #     r = requests.get(endpoint, headers=globals.headers)
-    #     globals.update_prev_response(r, endpoint)
-    #     r.raise_for_status()
-    #
-    #     data = r.json()
-    #     if data['count'] == 0:
-    #         return None
-    #     else:
-    #         matches = {}
-    #         for team in data['teams']:
-    #             matches[team['id']] = team['name']
-    #         return matches
-
-
 if __name__ == '__main__':
     f = Football()
     globals.headers = {'X-Auth-Token': os.getenv('PYFOOTBALL_API_KEY'),
@@ -323,7 +292,7 @@ if __name__ == '__main__':
     # print([c.name for c in f.get_all_competitions()]) # passed
     # print(f.get_competition('ELC').name)  # passed
     # print(f.get_competition_teams('ELC'))     # passed
-    print(set([fix.season['startDate'] for fix in f.get_comp_fixtures('ELC')]))   # passed
+    # print(set([fix.season['startDate'] for fix in f.get_comp_fixtures('ELC')]))   # passed
 
     # print(f.get_all_fixtures())   # passed
     # print(f.get_fixture(12).winner) # passed
