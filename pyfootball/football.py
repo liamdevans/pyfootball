@@ -1,3 +1,5 @@
+import datetime
+
 import requests
 import os
 
@@ -286,8 +288,10 @@ class Football(object):
 
 if __name__ == '__main__':
     f = Football()
-    globals.headers = {'X-Auth-Token': os.getenv('PYFOOTBALL_API_KEY'),
-                       'X-Unfold-Goals': 'true'}
+
+    # print([i.competition['type'] for i in f.get_team_fixtures(328)])
+#     globals.headers = {'X-Auth-Token': os.getenv('PYFOOTBALL_API_KEY'),
+#                        'X-Unfold-Goals': 'true'}
 
     # print([c.name for c in f.get_all_competitions()]) # passed
     # print(f.get_competition('ELC').name)  # passed
@@ -299,11 +303,23 @@ if __name__ == '__main__':
 
     # print([t.team_tla for t in f.get_league_table(2016).total_standings])   # passed
     # print(f.get_prev_response())   # passed
+    # team = f.get_team(328)
+    # print(team)     # passed
 
-    # print(f.get_team(90))     # passed
+    fix = f.get_team_fixtures(328)[2]
+    team_id = fix.home_team_id
+    print(f.get_team(team_id).venue)
+
     # print([h.home_team_name for h in f.get_team_fixtures(90)])  # passed
     # print(f.search_teams('manchester')) # failed
     # print([p.nationality for p in f.get_team_players(90)])  # passed
 
     # print(f.get_player(16275).shirt_number)  # passed
     # print([m.winner for m in f.get_player_matches(16275, 20)]) # passed
+
+    # fix = f.get_comp_fixtures('ELC')[0]
+    # print([key for key in fix.__dict__.keys() if type(fix.__dict__[key]) == datetime.datetime])
+
+    # comp = f.get_competition('ELC')
+    # print([key for key in comp.__dict__.keys() if type(comp.__dict__[key]) == datetime.datetime])
+

@@ -40,3 +40,6 @@ class Fixture(object):
         else:
             self.winner = None
 
+    def __repr__(self):
+        return f"[{self.date}] {self.home_team_name} vs {self.away_team_name}"
+
